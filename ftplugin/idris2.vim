@@ -91,7 +91,7 @@ function! IdrisResponseWin()
 endfunction
 
 function! IWrite(str)
-  if (bufexists("idris-response"))
+  if s:IsResposeWinVisible()
     " Save the cursor and scroll position (as well as some other details)
     let save_view = winsaveview()
 
