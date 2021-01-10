@@ -70,27 +70,21 @@ setlocal foldmethod=expr
 setlocal foldexpr=IdrisFold(v:lnum)
 
 function! IdrisResponseWin()
-  if (!bufexists("idris-response"))
+
+  " Check if the idris-response buffer is visible on the current tab
+  if index(tabpagebuflist(), bufnr("idris-response")) < 0
+    " Create the idris-response buffer if it isn't visible.
     botright 10split
     badd idris-response
     b idris-response
-    let g:idris_respwin = "active"
     set buftype=nofile
     wincmd k
-  elseif (bufexists("idris-response") && g:idris_respwin == "hidden")
-    botright 10split
-    b idris-response
-    let g:idris_respwin = "active"
-    wincmd k
+
+  else
+    " Close it otherwise, but just in the current tab
+    let winnr = bufwinnr("idris-response")
+    execute winnr . "wincmd c"
   endif
-endfunction
-
-function! IdrisHideResponseWin()
-  let g:idris_respwin = "hidden"
-endfunction
-
-function! IdrisShowResponseWin()
-  let g:idris_respwin = "active"
 endfunction
 
 function! IWrite(str)
@@ -324,6 +318,3 @@ menu Idris.Case\ Split <LocalLeader>c
 menu Idris.Add\ missing\ cases <LocalLeader>m
 menu Idris.Proof\ Search <LocalLeader>s
 menu Idris.Proof\ Search\ with\ hints <LocalLeader>p
-
-au BufHidden idris-response call IdrisHideResponseWin()
-au BufEnter idris-response call IdrisShowResponseWin()
