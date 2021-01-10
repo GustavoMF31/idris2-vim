@@ -69,10 +69,13 @@ endfunction
 setlocal foldmethod=expr
 setlocal foldexpr=IdrisFold(v:lnum)
 
-function! IdrisResponseWin()
+" Checks if the idris-response buffer is visible in the current tab
+function! s:IsResposeWinVisible()
+  return index(tabpagebuflist(), bufnr("idris-response")) >= 0
+endfunction
 
-  " Check if the idris-response buffer is visible on the current tab
-  if index(tabpagebuflist(), bufnr("idris-response")) < 0
+function! IdrisResponseWin()
+  if !s:IsResposeWinVisible()
     " Create the idris-response buffer if it isn't visible.
     botright 10split
     badd idris-response
